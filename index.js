@@ -59,10 +59,12 @@ async function run() {
 
 
 
+    // comment all api
+
     app.post('/comments', async (req, res) => {
       try {
         const commentData = req.body;
-       
+
         const result = await db.collection("comments").insertOne(commentData);
         res.json(result);
       } catch (error) {
@@ -79,6 +81,36 @@ async function run() {
         res.status(500).json({ message: "Failed to fetch comments" });
       }
     });
+
+    // database to delte api
+    app.delete("/comments/:id", async (req, res) => {
+      try {
+        const { id } = req.params;
+        const result = await db.collection("comments").deleteOne({
+          _id: new ObjectId(id)
+        });
+        res.json(result);
+      } catch (error) {
+        res.status(500).json({ message: "Delete failed" });
+      }
+    });
+
+    // databse theke update
+    app.patch("/comments/:id", async (req, res) => {
+      try {
+        const { id } = req.params;
+        const commentText  = req.body;
+        const result = await db.collection("comments").updateOne(
+          { _id: new ObjectId(id) },
+          { $set: commentText} 
+        );
+        res.json(result);
+      } catch (error) {
+        res.status(500).json({ message: "Update failed" });
+      }
+    });
+
+
 
 
     await client.db("admin").command({ ping: 1 });
