@@ -5,7 +5,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 dotenv.config();
 
 
-const uri =process.env.MONGODB_URI;
+const uri = process.env.MONGODB_URI;
 
 
 const app = express();
@@ -25,31 +25,61 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-   await client.connect();
+    await client.connect();
 
-   const db = client.db("idyavalut");
-   const idyavalutCollection = db.collection("idyas");
+    const db = client.db("idyavalut");
+    const idyavalutCollection = db.collection("idyas");
 
 
-   app.get('/idya',async(req,res)=>{
-    const result = await idyavalutCollection.find().toArray();
-    res.json(result)
-   })
+    app.get('/trending-ideas', async (req, res) => {
+      const result = await idyavalutCollection.find().limit(6).toArray();
+      res.json(result);
+    });
 
-   app.post('/idya',async (req,res)=>{
-    const idyaData = req.body;
-    console.log(idyaData);
-    const result = await idyavalutCollection.insertOne(idyaData);
-    res.json(result);
-   })
 
-  app.get("/idya/:id", async (req, res) => {
-        const { id } = req.params;
-        const result = await idyavalutCollection.findOne({
-            _id: new ObjectId(id)
-        });
+    app.get('/idya', async (req, res) => {
+      const result = await idyavalutCollection.find().toArray();
+      res.json(result)
+    })
+
+    app.post('/idya', async (req, res) => {
+      const idyaData = req.body;
+      console.log(idyaData);
+      const result = await idyavalutCollection.insertOne(idyaData);
+      res.json(result);
+    })
+
+    app.get("/idya/:id", async (req, res) => {
+      const { id } = req.params;
+      const result = await idyavalutCollection.findOne({
+        _id: new ObjectId(id)
+      });
+      res.json(result);
+    });
+
+
+
+    app.post('/comments', async (req, res) => {
+      try {
+        const commentData = req.body;
+       
+        const result = await db.collection("comments").insertOne(commentData);
         res.json(result);
-});
+      } catch (error) {
+        res.status(500).json({ message: "Failed to post comment" });
+      }
+    });
+
+    app.get('/comments/:ideaId', async (req, res) => {
+      try {
+        const { ideaId } = req.params;
+        const result = await db.collection("comments").find({ ideaId: ideaId }).toArray();
+        res.json(result);
+      } catch (error) {
+        res.status(500).json({ message: "Failed to fetch comments" });
+      }
+    });
+
 
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -60,10 +90,10 @@ async function run() {
 }
 run().catch(console.dir);
 
-app.get('/',async(req,res)=>{
-    res.send("Server is runnig !")
+app.get('/', async (req, res) => {
+  res.send("Server is runnig !")
 })
 
-app.listen(PORT, ()=>{
-    console.log(`Serrver runnign on port ${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Serrver runnign on port ${PORT}`);
 })
