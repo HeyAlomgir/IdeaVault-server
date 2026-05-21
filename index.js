@@ -30,6 +30,12 @@ async function run() {
    const db = client.db("idyavalut");
    const idyavalutCollection = db.collection("idyas");
 
+
+   app.get('/idya',async(req,res)=>{
+    const result = await idyavalutCollection.find().toArray();
+    res.json(result)
+   })
+
    app.post('/idya',async (req,res)=>{
     const idyaData = req.body;
     console.log(idyaData);
