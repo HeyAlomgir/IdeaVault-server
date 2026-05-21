@@ -1,7 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 dotenv.config();
 
 
@@ -42,6 +42,14 @@ async function run() {
     const result = await idyavalutCollection.insertOne(idyaData);
     res.json(result);
    })
+
+  app.get("/idya/:id", async (req, res) => {
+        const { id } = req.params;
+        const result = await idyavalutCollection.findOne({
+            _id: new ObjectId(id)
+        });
+        res.json(result);
+});
 
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
