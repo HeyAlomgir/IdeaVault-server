@@ -25,7 +25,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
 
     const db = client.db("idyavalut");
     const idyavalutCollection = db.collection("idyas");
@@ -49,7 +49,7 @@ async function run() {
       res.json(result);
     })
 
-    app.get("/idya/user/:userId",async(req,res)=>{
+    app.patch("/idya/user/:userId",async(req,res)=>{
       const {userId}=req.params;
       const updateData = req.body;
       const result = await idyavalutCollection.updateOne({
@@ -72,11 +72,6 @@ async function run() {
       });
       res.json(result);
     });
-
-
-
-
-
 
 
 
@@ -154,7 +149,7 @@ async function run() {
 
 
 
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
