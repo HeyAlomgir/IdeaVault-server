@@ -29,6 +29,7 @@ async function run() {
 
     const db = client.db("idyavalut");
     const idyavalutCollection = db.collection("idyas");
+    
 
 
     app.get('/trending-ideas', async (req, res) => {
@@ -42,6 +43,20 @@ async function run() {
       res.json(result)
     })
 
+    app.get("/idya/user/:userId",async(req,res)=>{
+      const {userId} = req.params;
+      const result = await idyavalutCollection.find({userId}).toArray();
+      res.json(result);
+    })
+
+    app.get("/idya/user/:userId",async(req,res)=>{
+      const {userId}=req.params;
+      const updateData = req.body;
+      const result = await idyavalutCollection.updateOne({
+        _id:new ObjectId(userId)
+      })
+      res.json(result)
+    })
 
     app.post('/idya', async (req, res) => {
       const idyaData = req.body;
