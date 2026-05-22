@@ -42,6 +42,7 @@ async function run() {
       res.json(result)
     })
 
+
     app.post('/idya', async (req, res) => {
       const idyaData = req.body;
       console.log(idyaData);
@@ -56,6 +57,13 @@ async function run() {
       });
       res.json(result);
     });
+
+
+
+
+
+
+
 
 
 
@@ -82,6 +90,24 @@ async function run() {
       }
     });
 
+
+    // my-interaciton
+
+    app.get('/my-comments', async (req, res) => {
+      try {
+        const userEmailParam = req.query.email;
+        const result = await db.collection("comments").find({ userEmail: userEmailParam }).toArray();
+        res.json(result);
+
+      } catch (error) {
+        console.error(error);
+        res.json([]);
+      }
+    });
+
+
+
+
     // database to delte api
     app.delete("/comments/:id", async (req, res) => {
       try {
@@ -99,10 +125,10 @@ async function run() {
     app.patch("/comments/:id", async (req, res) => {
       try {
         const { id } = req.params;
-        const commentText  = req.body;
+        const commentText = req.body;
         const result = await db.collection("comments").updateOne(
           { _id: new ObjectId(id) },
-          { $set: commentText} 
+          { $set: commentText }
         );
         res.json(result);
       } catch (error) {
